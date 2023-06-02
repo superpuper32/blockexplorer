@@ -21,6 +21,15 @@ const alchemy = new Alchemy(settings);
 
 function App() {
   const [blockNumber, setBlockNumber] = useState();
+  const [block, setBlock] = useState('');
+ 
+  async function getNewBlock(e) {
+    try {
+        setBlock(await alchemy.core.getBlock(blockNumber));
+    } catch(error) {
+      console.error(error)
+    }
+  }
 
   useEffect(() => {
     async function getBlockNumber() {
@@ -30,7 +39,18 @@ function App() {
     getBlockNumber();
   });
 
-  return <div className="App">Block Number: {blockNumber}</div>;
+  return <>
+  <div className="App">Block Number: {blockNumber}</div>
+
+  <button onClick={getNewBlock}>Get More Info about  Current Block</button>
+  <div>Block Hash: {block.hash}</div>
+  <div>Block Miner: {block.miner}</div>
+  <ul>
+    {block.transactions && block.transactions.map((tx, ndx) => 
+      <li index={ndx}>{tx}</li>
+      )}
+  </ul>
+  </>;
 }
 
 export default App;
