@@ -21,6 +21,26 @@ const alchemy = new Alchemy(settings);
 
 function App() {
   const [blockNumber, setBlockNumber] = useState();
+  const [block, setBlock] = useState('');
+  // const [txList, setTxList] = useState();
+  const [receipt, setReceipt] = useState();
+ 
+  async function getNewBlock(e) {
+    try {
+        setBlock(await alchemy.core.getBlock(blockNumber));
+        // setTxList(await alchemy.core.getBlockWithTransactions(blockNumber));
+    } catch(error) {
+      console.error(error)
+    }
+  }
+
+  const getTxReceipt = (tx) => async (e) => {
+      try {
+          setReceipt(await alchemy.core.getTransactionReceipt(tx));
+      } catch(error) {
+        console.error(error)
+      }
+  }
 
   useEffect(() => {
     async function getBlockNumber() {
@@ -28,9 +48,26 @@ function App() {
     }
 
     getBlockNumber();
-  });
+  }, []);
 
-  return <div className="App">Block Number: {blockNumber}</div>;
+  return <>
+    <div className="App">
+      <div>Block Number: {blockNumber}</div>
+      <button onClick={getNewBlock}>Get More Info about Current Block</button>
+    </div>
+
+    {block.hash && <div><b>Block Hash:</b> {block.hash}</div>}
+
+    {block.miner && <div><b>Block Miner Address:</b> {block.miner}</div>}
+
+    {receipt && <div>receipt block number: {receipt.blockNumber}</div>}
+    <ul>
+      {block.transactions && block.transactions.map((tx, ndx) => 
+        <li key={ndx} onClick={getTxReceipt(tx)}>{tx}</li>
+        )}
+    </ul>
+  </>;
 }
-
+  
+  
 export default App;
