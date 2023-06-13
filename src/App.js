@@ -22,13 +22,11 @@ const alchemy = new Alchemy(settings);
 function App() {
   const [blockNumber, setBlockNumber] = useState();
   const [block, setBlock] = useState('');
-  // const [txList, setTxList] = useState();
   const [receipt, setReceipt] = useState();
  
   async function getNewBlock(e) {
     try {
         setBlock(await alchemy.core.getBlock(blockNumber));
-        // setTxList(await alchemy.core.getBlockWithTransactions(blockNumber));
     } catch(error) {
       console.error(error)
     }
