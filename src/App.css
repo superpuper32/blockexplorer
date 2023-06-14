@@ -3,9 +3,18 @@
   text-align: center;
 }
 
+.App-main {
+  margin: 20px;
+  text-align: center;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.App-navbar {
+  text-align: left;
 }
 
 @media (prefers-reduced-motion: no-preference) {
