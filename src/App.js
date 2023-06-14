@@ -21,14 +21,21 @@ const alchemy = new Alchemy(settings);
 
 function App() {
   const [blockNumber, setBlockNumber] = useState();
-  const [block, setBlock] = useState('');
-  // const [txList, setTxList] = useState();
-  const [receipt, setReceipt] = useState();
+  const [block, setBlock] = useState(null);
+  const [transactions, setTransactions] = useState();
+  const [receipt, setReceipt] = useState(null);
  
-  async function getNewBlock(e) {
+  async function getBlock(e) {
     try {
         setBlock(await alchemy.core.getBlock(blockNumber));
-        // setTxList(await alchemy.core.getBlockWithTransactions(blockNumber));
+    } catch(error) {
+      console.error(error)
+    }
+  }
+
+  async function getBlockWithTransactions(e) {
+    try {
+        setTransactions(await alchemy.core.getBlockWithTransactions(blockNumber));
     } catch(error) {
       console.error(error)
     }
@@ -52,22 +59,51 @@ function App() {
 
   return <>
     <div className="App">
-      <div>Block Number: {blockNumber}</div>
-      <button onClick={getNewBlock}>Get More Info about Current Block</button>
+      <div className="App-header">Block Number: {blockNumber}</div>
+      <button onClick={getBlock}>Get Block Info</button>
+      <button onClick={getBlockWithTransactions}>Get Block Transactions</button>
     </div>
 
-    {block.hash && <div><b>Block Hash:</b> {block.hash}</div>}
+    <main className="App-main">
+      {block && 
+        <div>
+          <h3>Block Info</h3>
+          <div><b>Hash:</b> {block.hash}</div>
+          <div><b>Parent Hash:</b> {block.parentHash}</div>
+          <div><b>Nonce:</b> {block.nonce}</div>
+          <div><b>Miner Address:</b> {block.miner}</div>
+          <div><b>Transactions Count:</b> {block.transactions.length}</div>
+        </div>
+      }
 
-    {block.miner && <div><b>Block Miner Address:</b> {block.miner}</div>}
+      <div className="App-container">
+        <div>
+          <h3>List of Transactions</h3>
+          <ul>
+            {block && block.transactions.map((tx, ndx) => 
+              <li className="App-link" key={ndx} onClick={getTxReceipt(tx)}><b>{ndx + 1} - </b>{tx}</li>
+            )}
+          </ul>
+        </div>
 
-    {receipt && <div>receipt block number: {receipt.blockNumber}</div>}
-    <ul>
-      {block.transactions && block.transactions.map((tx, ndx) => 
-        <li key={ndx} onClick={getTxReceipt(tx)}>{tx}</li>
-        )}
-    </ul>
-  </>;
-}
+        <div>
+          {receipt && 
+            <>
+              <h3>Transaction {receipt.transactionIndex + 1} Details</h3>
+              <div>
+                <div><b>to:</b> {receipt.to}</div>
+                <div><b>from:</b> {receipt.from}</div>
+                <div><b>block hash:</b> {receipt.blockHash}</div>
+                <div><b>transaction hash:</b> {receipt.transactionHash}</div>
+                <div><b>block number:</b> {receipt.blockNumber}</div>
+              </div>
+            </>
+          }
+        </div>
+      </div>
+    </main>
+    </>;
+  }
   
   
 export default App;

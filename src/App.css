@@ -26,7 +26,25 @@
 }
 
 .App-link {
+  margin: 5px;
+  padding: 3px;
+  border: 1px solid #000;
   color: #61dafb;
+  list-style-type: none;
+  cursor: pointer;
+}
+
+.App-main {
+  margin: 30px;
+}
+
+.App-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.App-box {
+
 }
 
 @keyframes App-logo-spin {
